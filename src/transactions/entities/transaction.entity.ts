@@ -5,8 +5,8 @@ import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Up
 @Entity()
 export class Transaction {
 
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryGeneratedColumn({ name: "transactionId" })
+  transactionId: number
 
   @Column()
   title: string

@@ -6,7 +6,7 @@ import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGenerate
 export class Category {
   
   @PrimaryGeneratedColumn()
-  id: number
+  categoryId: number
 
   @Column()
   title: string

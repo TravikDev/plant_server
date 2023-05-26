@@ -5,8 +5,8 @@ import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, Up
 @Entity()
 export class User {
 
-  @PrimaryGeneratedColumn()
-  id: number
+  @PrimaryGeneratedColumn({ name: 'userId' })
+  userId: number
 
   @Column()
   username: string
@@ -14,10 +14,10 @@ export class User {
   @Column()
   password: string
 
-  @OneToMany(() => Category, category => category.user)
+  @OneToMany(() => Category, category => category.user, { onDelete: "CASCADE" })
   categories: Category[]
 
-  @OneToMany(() => Transaction, transaction => transaction.user)
+  @OneToMany(() => Transaction, transaction => transaction.user, { onDelete: "CASCADE" })
   transactions: Transaction[]
 
   @CreateDateColumn()
