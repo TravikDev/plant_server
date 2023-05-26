@@ -28,8 +28,8 @@ export class UsersController {
   //   return this.usersService.update(+id, updateUserDto);
   // }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.usersService.remove(+id);
-  // }
+  @Delete(':username')
+  remove(@Param('username') username: string) {
+    return this.usersService.remove(username);
+  }
 }
