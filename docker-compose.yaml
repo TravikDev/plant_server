@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  plant_postgres:
+    container_name: plant_server_postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: plant_server
+      POSTGRES_PASSWORD: plant_server
+      PGDATA: /data/postgres
+    volumes:
+       - postgres:/var/www/plant_server/docker-volumes/postgres
+    ports:
+      - 127.0.0.1:5432:5432
+    networks:
+      - plant_server
+    restart: unless-stopped
+
+  plant_pgadmin:
+    container_name: plant_server_pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: plant_server@admin.com
+      PGADMIN_DEFAULT_PASSWORD: plant_server
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+       - pgadmin:/var/www/plant_server/docker-volumes/pgadmin
+    ports:
+      - 127.0.0.1:5050:80
+    networks:
+      - plant_server
+    restart: unless-stopped
+
+networks:
+  plant_server:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
