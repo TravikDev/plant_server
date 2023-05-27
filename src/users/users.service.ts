@@ -4,6 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as argon2 from "argon2"
 
 @Injectable()
 export class UsersService {
@@ -11,13 +12,13 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly usersRepository: Repository<User>
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto) {
-    console.log(createUserDto)
     const userExist = await this.usersRepository.findOneBy({ username: createUserDto.username })
-    if(userExist) throw new UnauthorizedException('This user already exist')
-    return await this.usersRepository.save(createUserDto)
+    if (userExist) throw new UnauthorizedException('This user already exist')
+    const password = await argon2.hash(createUserDto.password)
+    return await this.usersRepository.save({ ...createUserDto, password })
   }
 
   async findOne(username: string): Promise<User | undefined> {
@@ -37,7 +38,14 @@ export class UsersService {
   //   return `This action updates a #${id} user`;
   // }
 
-  // remove(id: number) {
-    // return `This action removes a #${id} user`;
-  // }
+  async remove(username: string) {
+    const userExist = await this.usersRepository.findOneBy({ username })
+    console.log(userExist)
+    if (userExist) {
+      await this.usersRepository.delete({ username })
+      return `User ${username} has been deleted`
+    } else {
+      return 'No one user with this username'
+    }
+  }
 }
