@@ -40,7 +40,6 @@ export class UsersService {
 
   async remove(username: string) {
     const userExist = await this.usersRepository.findOneBy({ username })
-    console.log(userExist)
     if (userExist) {
       await this.usersRepository.delete({ username })
       return `User ${username} has been deleted`
