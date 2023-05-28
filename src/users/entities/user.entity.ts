@@ -16,7 +16,7 @@ export class User {
 
   @OneToMany(() => Category, category => category.user, { onDelete: "CASCADE" })
   categories: Category[]
-
+  
   @OneToMany(() => Transaction, transaction => transaction.user, { onDelete: "CASCADE" })
   transactions: Transaction[]
 

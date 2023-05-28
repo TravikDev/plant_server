@@ -15,9 +15,7 @@ export class CategoriesService {
 
   async create(createCategoryDto: CreateCategoryDto, userId: number) {
     const categoryExist = await this.categoryRepository.findOne({
-      where: {
-        ...createCategoryDto,
-      },
+      where: { ...createCategoryDto, },
       relations: {
         user: true,
         transactions: true
@@ -26,18 +24,30 @@ export class CategoriesService {
 
     if(categoryExist) throw new BadRequestException('Category is already exist')
 
-    await this.categoryRepository.save({...createCategoryDto})
+    await this.categoryRepository.save({...createCategoryDto, user: { userId }})
 
     return { message: 'The category has been created'};
   }
 
   async findAll() {
-    const categoriesAll = await this.categoryRepository.find()
+    const categoriesAll = await this.categoryRepository.find({ 
+      relations: {
+        user: true,
+        transactions: true,
+      }
+    })
     return categoriesAll;
   }
 
   async findOne(categoryId: number) {
-    const categoryExist = await this.categoryRepository.findOneBy({ categoryId })
+    const categoryExist = await this.categoryRepository.findOne({ 
+      where: { categoryId },
+      relations: { 
+        user: true,
+        transactions: true
+       }
+
+    })
     if(categoryExist) return categoryExist
     return null
   }
@@ -51,10 +61,8 @@ export class CategoriesService {
 
   async remove(categoryId: number) {
     const categoryExist = await this.categoryRepository.findOneBy({ categoryId })
-    if(categoryExist) {
+    if(!categoryExist) return { message: `Category with id ${categoryId} is not found` };
       await this.categoryRepository.delete({ categoryId })
       return { message: 'The category has been deleted successfully' }
-    }
-    return { message: `Category with id ${categoryId} is not found` };
   }
 }

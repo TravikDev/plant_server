@@ -8,6 +8,8 @@ import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { AuthModule } from './auth/auth.module';
+import { UserDecorator } from './users/decorators/user.decorator';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [

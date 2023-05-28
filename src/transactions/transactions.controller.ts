@@ -1,34 +1,46 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserDecorator } from 'src/users/decorators/user.decorator';
+import { User } from 'src/users/entities/user.entity';
 
 @Controller('transactions')
+@UseGuards(JwtAuthGuard)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
 
   @Post()
-  create(@Body() createTransactionDto: CreateTransactionDto) {
-    return this.transactionsService.create(createTransactionDto);
+  @UsePipes(new ValidationPipe())
+  create(@Body() createTransactionDto: CreateTransactionDto, @UserDecorator() user: User) {
+    return this.transactionsService.create(createTransactionDto, +user.userId);
   }
 
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  findAll(@UserDecorator() user: User) {
+    return this.transactionsService.findAll(+user.userId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(+id);
+  @Get(':transactionId')
+  findOne(@Param('transactionId') transactionId: string) {
+    return this.transactionsService.findOne(+transactionId);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
-    return this.transactionsService.update(+id, updateTransactionDto);
+  @Patch(':transactionId')
+  update(
+    @Param('transactionId') transactionId: string, 
+    @Body() updateTransactionDto: UpdateTransactionDto, 
+    @UserDecorator() user: User) {
+      console.log(user)
+    return this.transactionsService.update(+transactionId, updateTransactionDto, +user.userId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.transactionsService.remove(+id);
+  @Delete(':transactionId')
+  remove(
+    @Param('transactionId') transactionId: string,
+    @UserDecorator() user: User
+  ) {
+    return this.transactionsService.remove(+transactionId, +user.userId);
   }
 }

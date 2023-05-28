@@ -5,18 +5,18 @@ import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, Pri
 @Entity()
 export class Category {
   
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: "categoryId" })
   categoryId: number
 
   @Column()
   title: string
 
-  @ManyToOne(() => User, user => user)
+  @ManyToOne(() => User, user => user.categories)
   @JoinColumn({ name: 'userId '})
   user: User
   
   @OneToMany(() => Transaction, transaction => transaction.category)
-  @JoinColumn({ name: 'categoryId' })
+  @JoinColumn({ name: 'transactionId' })
   transactions: Transaction[]
 
   @CreateDateColumn()
