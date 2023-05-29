@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UsePipes, ValidationPipe, Query } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -15,6 +15,19 @@ export class TransactionsController {
   @UsePipes(new ValidationPipe())
   create(@Body() createTransactionDto: CreateTransactionDto, @UserDecorator() user: User) {
     return this.transactionsService.create(createTransactionDto, +user.userId);
+  }
+  
+  @Get('feed')
+  pagination(
+    @Query('currentCount') currentCount: number,
+    @Query('nextCount') nextCount: number,
+    @Query('category') category: string[] = [],
+    @Query('type') type: string[] = [],
+    @Query('sortType') sortType: string,
+    @Query('sortOrder') sortOrder: string,
+    @UserDecorator() user: User
+    ) {
+    return this.transactionsService.pagination(currentCount, nextCount, category, type, sortType, sortOrder);
   }
 
   @Get()
