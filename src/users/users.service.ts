@@ -22,12 +22,12 @@ export class UsersService {
   }
 
   async findOne(username: string): Promise<User | undefined> {
-    const userExist = await this.usersRepository.findOneBy({ username })
+    const userExist = await this.usersRepository.findOne({ where: { username }, relations: { cultures: true, verieties: true }}, )
     return userExist
   }
 
   async findAll() {
-    return await this.usersRepository.find()
+    return await this.usersRepository.find({ relations: { cultures: true, verieties: true }})
   }
 
   // findOne(id: number) {
