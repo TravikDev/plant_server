@@ -9,6 +9,10 @@ export class CreatePostDto {
   @IsNotEmpty()
   title: string
 
+  @IsString()
+  @IsNotEmpty()
+  content: string
+
   @IsOptional()
   culture: Culture
 

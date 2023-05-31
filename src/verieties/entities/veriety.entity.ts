@@ -1,5 +1,6 @@
 import { Culture } from "src/cultures/entities/culture.entity";
 import { Post } from "src/posts/entities/post.entity";
+import { System } from "src/systems/entities/system.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
@@ -21,6 +22,10 @@ export class Veriety {
 
   @OneToMany(() => Post, post => post.veriety, { nullable: true })
   posts: Post[]
+
+  @ManyToMany(() => System, { nullable: true })
+  @JoinTable({ name: 'verieties_of_system' })
+  system: System[]
 
   @CreateDateColumn()
   createdAt: string

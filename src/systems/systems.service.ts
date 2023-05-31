@@ -1,26 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateSystemDto } from './dto/create-system.dto';
 import { UpdateSystemDto } from './dto/update-system.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { System } from './entities/system.entity';
+import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class SystemsService {
-  create(createSystemDto: CreateSystemDto) {
-    return 'This action adds a new system';
+
+  constructor(
+    @InjectRepository(System)
+    private systemRepository: Repository<System>
+  ) {}
+
+  async create(createSystemDto: CreateSystemDto, user: User) {
+
+    const systemExist = await this.systemRepository.findOne({ 
+      where: { 
+        title: createSystemDto.title,
+        user: { userId: user.userId }
+      },
+    })
+
+    // console.log(systemExist)
+    if(systemExist) throw new BadRequestException(`System with the same name '${createSystemDto.title}' already exist in user: '${user.username}'`)
+
+    const systemNew = await this.systemRepository.save({ ...createSystemDto, user })
+
+    return { message: 'System added successfully', systemNew };
   }
 
-  findAll() {
-    return `This action returns all systems`;
+  async findAll() {
+    return await this.systemRepository.find({ relations: { cultures: true, verieties: true, user: true }});
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} system`;
+  async findOne(id: number) {
+    const systemExist = await this.systemRepository.findOne({ where: { systemId: id }, relations: { cultures: true, verieties: true, user: true }})
+    if(!systemExist) throw new BadRequestException('This system doesn\'t exist!')
+    return systemExist;
   }
 
-  update(id: number, updateSystemDto: UpdateSystemDto) {
-    return `This action updates a #${id} system`;
+  async update(id: number, updateSystemDto: UpdateSystemDto) {
+    const systemExist = await this.systemRepository.findOne({ where: { systemId: id }})
+    if(!systemExist) throw new BadRequestException('This system doesn\'t exist!')
+    const systemUpdated = await this.systemRepository.save(updateSystemDto)
+    return { message: 'System successfully updated', systemUpdated };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} system`;
+  async remove(id: number) {
+    const systemExist = await this.systemRepository.findOne({ where: { systemId: id }})
+    if(!systemExist) throw new BadRequestException('This system doesn\'t exist!')
+    await this.systemRepository.delete(systemExist)
+    return { message: 'System successfully deleted', systemExist };
   }
 }
