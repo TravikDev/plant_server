@@ -4,24 +4,20 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 // import { jwtConstants } from '../constants';
 
-type Payload = {
-  sub: number,
-  username: string
-}
-
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
+export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
   constructor(
     private readonly configService: ConfigService
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: configService.get('ACCESS_TOKEN'),
+      secretOrKey: configService.get('REFRESH_TOKEN'),
     });
   }
 
-  async validate(payload: Payload) {
+  async validate(payload: any) {
+    console.log(payload)
     return { userId: payload.sub, username: payload.username };
   }
 }

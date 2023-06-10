@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -14,12 +14,12 @@ export class UsersService {
     private readonly usersRepository: Repository<User>
   ) { }
 
-  async create(createUserDto: CreateUserDto) {
-    const userExist = await this.usersRepository.findOneBy({ username: createUserDto.username })
-    if (userExist) throw new UnauthorizedException('This user already exist')
-    const password = await argon2.hash(createUserDto.password)
-    return await this.usersRepository.save({ ...createUserDto, password })
-  }
+  // async create(createUserDto: CreateUserDto) {
+  //   const userExist = await this.usersRepository.findOneBy({ username: createUserDto.username })
+  //   if (userExist) throw new UnauthorizedException('This user already exist')
+  //   const password = await argon2.hash(createUserDto.password)
+  //   return await this.usersRepository.save({ ...createUserDto, password })
+  // }
 
   async findOne(username: string): Promise<User | undefined> {
     const userExist = await this.usersRepository.findOne({
@@ -39,9 +39,14 @@ export class UsersService {
   //   return `This action returns a #${id} user`;
   // }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(userId: number, updateUserDto: UpdateUserDto) {
+    
+    const userExist = await this.usersRepository.findOne({ where: { userId }})
+    
+    if(!userExist) throw new BadRequestException('')
+
+    return await this.usersRepository.save({ ...updateUserDto, userId });
+  }
 
   async remove(username: string) {
     const userExist = await this.usersRepository.findOneBy({ username })
