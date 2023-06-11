@@ -14,11 +14,11 @@ export class CreatePostDto {
   content: string
 
   @IsOptional()
-  culture: Culture
+  culture?: Culture
 
   @IsOptional()
-  veriety: Veriety
+  veriety?: Veriety
 
   @IsOptional()
-  system: System
+  system?: System
 }
