@@ -77,7 +77,7 @@ export class AuthService {
   }
 
   // REFRESH TOKEN
-  refreshToken(req: Request) {
+  refresh(req: Request) {
     console.log('1')
     const token = this.checkCookie(req)
     console.log('2')

@@ -52,9 +52,9 @@ export class AuthController {
 
   // @UseGuards(LocalAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @Post('refreshToken')
-  refreshToken(@Req() req: Request) {
-    return this.authService.refreshToken(req)
+  @Post('refresh')
+  refresh(@Req() req: Request) {
+    return this.authService.refresh(req)
   }
 
   @UseGuards(JwtAuthGuard)

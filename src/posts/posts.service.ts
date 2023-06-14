@@ -22,7 +22,8 @@ export class PostsService {
   }
 
   async findAll() {
-    return await this.postsRepository.find({ relations: { culture: true, veriety: true, system: true, user: true } });
+    console.log(new Date().toISOString())
+    return await this.postsRepository.find({ relations: { culture: true, veriety: true, system: true, user: true }, order: { createdAt: 'DESC' } });
   }
 
   async findOne(id: number) {
